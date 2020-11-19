@@ -65,6 +65,7 @@
 //! | windows-vista             |
 //! | windows-xp                |
 //! | windows-2000              | Enable APIs that require Windows 2000 or later (most of this crate)
+//! | &nbsp; | |
 //! | winapi-family-desktop-app | Enable APIs available to Desktop-only non-store apps
 //! | winapi-family-pc-app      | Enable APIs available to Desktop-only store apps
 //! | winapi-family-phone-app   | Enable APIs available to Phone-only apps
