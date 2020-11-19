@@ -126,6 +126,17 @@ impl<I: Interface + AsIUnknown> Rc<I> {
         Ok(Self::from_raw(mqi0.pItf.cast()))
     }
 
+    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-queryinterface(refiid_void))\]
+    ///
+    /// Queries a COM object for a pointer to one of its interface; identifying the interface by a reference to its interface identifier (IID).
+    pub fn try_cast<I2: Interface + AsIUnknown>(&self) -> Option<Rc<I2>> {
+        let mut ptr = null_mut();
+        let hr = unsafe { self.0.as_ref().as_iunknown().QueryInterface(&I2::uuidof(), &mut ptr) };
+        // hr should be S_OK or E_NONTERFACE
+        if !SUCCEEDED(hr) { return None; }
+        unsafe { Rc::from_raw_opt(ptr.cast()) }
+    }
+
     /// Retrieve a raw pointer for passing to COM APIs.  This [Rc] maintains ownership of the pointer.
     pub fn as_ptr(&self) -> *mut I {
         self.0.as_ptr()
@@ -139,6 +150,17 @@ impl<I: Interface + AsIUnknown> Rc<I> {
         let p = self.as_ptr();
         std::mem::forget(self);
         p
+    }
+}
+
+impl<I: Interface + AsIUnknown + Deref> Rc<I> where I::Target : Interface + AsIUnknown + Sized {
+    /// Cast up the COM inheritence tree
+    pub fn up(self) -> Rc<I::Target> {
+        let raw = self.into_raw();
+        let cast : *mut I::Target = raw.cast();
+        let deref : *const I::Target = unsafe { &**raw };
+        assert_eq!(cast as *const _, deref);
+        unsafe { Rc::from_raw(cast) }
     }
 }
 
