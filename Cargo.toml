@@ -1,0 +1,110 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+members = [
+    ".",
+    "dev",
+]
+
+[package]
+name            = "mcom"
+version         = "0.0.0-git"
+authors         = ["MaulingMonkey <git@maulingmonkey.com>"]
+edition         = "2018"
+repository      = "https://github.com/MaulingMonkey/mcom"
+documentation   = "https://docs.rs/mcom"
+license         = "Apache-2.0 OR MIT"
+readme          = "Readme.md"
+description     = "MaulingMonkey's COM wrappers"
+keywords        = ["com", "winapi"]
+categories      = ["api-bindings", "os::windows-apis"]
+exclude         = [".vscode"]
+
+[package.metadata.docs.rs]
+default-target  = "x86_64-pc-windows-msvc"
+targets         = ["x86_64-pc-windows-msvc", "i686-pc-windows-msvc"]
+
+[lib]
+path            = "src/_lib.rs"
+
+[features]
+default = [
+    "windows-latest",
+    "winapi-family-all",
+]
+
+# https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
+windows-latest  = ["windows-10"]
+windows-10      = ["windows-8-1"]
+windows-8-1     = ["windows-8"]
+windows-8       = ["windows-7"]
+windows-7       = ["windows-vista"]
+windows-vista   = ["windows-xp"]
+windows-xp      = ["windows-2000"]
+windows-2000    = []
+# windows-98? 95? me? nt4?
+
+# C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\winapifamily.h
+winapi-family-all = [
+    "winapi-family-desktop-app",
+    "winapi-family-pc-app",
+    "winapi-family-phone-app",
+    "winapi-family-system",
+    "winapi-family-server",
+    "winapi-family-games",
+]
+winapi-family-desktop-app   = [] # Windows Desktop Applications (traditional)
+winapi-family-pc-app        = [] # Windows Store Applications
+winapi-family-phone-app     = [] # Windows Phone Applications
+winapi-family-system        = [] # Windows Drivers and Tools
+winapi-family-server        = [] # Windows Server Applications
+winapi-family-games         = [] # Windows "Games and Applications"
+
+
+[[example]]
+name                = "d3d9"
+required-features   = ["windows-8-1"] # Agile
+
+[[example]]
+name                = "d3d11"
+required-features   = ["windows-8-1"] # Agile
+
+[[test]]
+name                = "d3d9"
+required-features   = ["windows-8-1"] # Agile
+
+[[test]]
+name                = "d3d11"
+required-features   = ["windows-8-1"] # Agile
+
+
+
+[dev-dependencies]
+dev = { path = "dev" }
+
+[target.'cfg(windows)'.dependencies.winapi]
+version         = "0.3.9"
+features = [
+    # shared
+    "guiddef",
+    "winerror",
+    "wtypesbase",
+
+    # um
+    "cguid",
+    "combaseapi",
+    "objbase",
+    "objidlbase",
+    "unknwnbase",
+]
+
+[target.'cfg(windows)'.dev-dependencies.winapi]
+version         = "0.3.9"
+features = [
+    # shared
+    "d3d9",
+
+    # um
+    "d3d11",
+    "winuser",
+]
