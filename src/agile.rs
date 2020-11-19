@@ -23,10 +23,12 @@ pub struct Agile<I: Interface + AsIUnknown> {
 }
 
 impl<I: Interface + AsIUnknown> Agile<I> {
+    /// Eagerly marshal a COM interface for use in another apartment.  Will fail if this is not possible.
     pub fn try_from_eager(unk: impl AsRef<Rc<I>>) -> Result<Self, MethodHResult> {
         Self::ro_get_agile_reference(ReferenceOptions::DEFAULT, unk)
     }
 
+    /// Lazily marshal a COM interface for use in another thread.  May fail when converted back into an [Rc] if in another COM apartment.
     pub fn try_from_lazy(unk: impl AsRef<Rc<I>>) -> Result<Self, MethodHResult> {
         Self::ro_get_agile_reference(ReferenceOptions::DELAYED_MARSHAL, unk)
     }

@@ -82,6 +82,7 @@
 //! [ID3D12FunctionReflection]:     https://docs.microsoft.com/en-us/windows/win32/api/d3d12shader/nn-d3d12shader-id3d12functionreflection
 //! [winapi::Interface]:            https://docs.rs/winapi/0.3/winapi/trait.Interface.html
 
+#![deny(missing_docs)]
 #![deny(unreachable_patterns)]  // Likely missing "use winapi::shared::winerror::S_OK;" or similar
 #![deny(non_snake_case)]        // Likely missing "use winapi::shared::winerror::S_OK;" or similar
 #![cfg_attr(not(all(windows = "10", partition = "desktop")), allow(unused_imports))]

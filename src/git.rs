@@ -21,6 +21,7 @@ use std::sync::Arc;
 pub struct Git<I: Interface + AsIUnknown>(Arc<Cookie<I>>);
 
 impl<I: Interface + AsIUnknown> Git<I> {
+    /// Lazily marshal a COM interface for use in another thread.  May fail when converted back into an [Rc] if in another COM apartment.
     pub fn try_from_lazy(unk: impl AsRef<Rc<I>>) -> Result<Self, MethodHResult> {
         Cookie::new(unk.as_ref()).map(|c| Self(Arc::new(c)))
     }

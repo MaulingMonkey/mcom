@@ -3,6 +3,9 @@ use winapi::Interface;
 
 
 
+#[doc(hidden)]
+// XXX: Ehh... this type may not remain exposed by mcom / might be subsumed into winapi.
+// See https://github.com/retep998/winapi-rs/pull/961 for some of the details.
 pub unsafe trait AsIUnknown {
     fn as_iunknown(&self) -> &IUnknown;
 

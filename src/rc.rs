@@ -19,23 +19,77 @@ use std::ops::Deref;
 #[repr(transparent)] pub struct Rc<I: Interface + AsIUnknown>(NonNull<I>);
 
 impl<I: Interface + AsIUnknown> Rc<I> {
+    /// Take ownership of a raw COM pointer.  [AddRef] will **not** be called.  [Release] **will* be called when this [Rc] is dropped.
+    ///
+    /// ### Safety
+    ///
+    /// * `ptr` may be null, in which case `None` will be returned.  Otherwise:
+    /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `ptr` must remain valid until this [Rc] is dropped
+    /// * `ptr.Release()` must be safe+sound when this [Rc] is dropped
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn from_raw_opt(ptr: *mut I) -> Option<Self> {
         Some(Self(NonNull::new(ptr)?))
     }
 
+    /// Take ownership of a raw COM pointer.  [AddRef] will **not** be called.  [Release] **will* be called when this [Rc] is dropped.
+    ///
+    /// ### Safety
+    ///
+    /// * `ptr` may be null, but this will result in a panic.  Otherwise:
+    /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `ptr` must remain valid until this [Rc] is dropped
+    /// * `ptr.Release()` must be safe+sound when this [Rc] is dropped
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn from_raw(ptr: *mut I) -> Self {
         Self::from_raw_opt(ptr).unwrap()
     }
 
+    /// Take ownership of a raw COM pointer.  [AddRef] will **not** be called.  [Release] **will* be called when this [Rc] is dropped.
+    ///
+    /// ### Safety
+    ///
+    /// * `ptr` **must not** be null, on pain of undefined behavior.
+    /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `ptr` must remain valid until this [Rc] is dropped
+    /// * `ptr.Release()` must be safe+sound when this [Rc] is dropped
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn from_raw_unchecked(ptr: *mut I) -> Self {
         Self(NonNull::new_unchecked(ptr))
     }
 
+    /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
+    ///
+    /// ### Safety
+    ///
+    /// * `ptr` may be null, in which case `None` will be returned.  Otherwise:
+    /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `ptr` must remain valid until the &[Rc] goes out of scope.
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow(ptr: &*mut I) -> &Option<Self> {
         std::mem::transmute(ptr)
     }
 
     /// [CoCreateInstance](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\[[FromApp](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
+    ///
+    /// ### Safety
+    ///
+    /// * `I` must have sane implementations of [Interface] and [AsIUnknown] (see [winapi#961] for what can happen with improper implementations!)
+    /// * `clsid` and `I` are assumed to be well behaved COM APIs.  This is probably a bad assumption, but a failure to be so is a bug in C++ code, not Rust code.
+    ///
+    /// [winapi#961]:       https://github.com/retep998/winapi-rs/pull/961
     pub unsafe fn co_create(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> {
         Self::co_create_impl(clsid, outer)
     }
@@ -72,10 +126,15 @@ impl<I: Interface + AsIUnknown> Rc<I> {
         Ok(Self::from_raw(mqi0.pItf.cast()))
     }
 
+    /// Retrieve a raw pointer for passing to COM APIs.  This [Rc] maintains ownership of the pointer.
     pub fn as_ptr(&self) -> *mut I {
         self.0.as_ptr()
     }
 
+    /// Convert this smart pointer into a raw COM API pointer without [Release]ing it.
+    /// This is a potential memory leak if the function this pointer was passed to did not assume ownership.
+    ///
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     pub fn into_raw(self) -> *mut I {
         let p = self.as_ptr();
         std::mem::forget(self);
