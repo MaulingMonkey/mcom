@@ -6,11 +6,8 @@ use winapi::um::d3d11::*;
 
 use std::convert::TryFrom;
 use std::ptr::{null, null_mut};
-use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 
 
-
-static QUIT : AtomicBool = AtomicBool::new(false);
 
 fn main() {
     mcom::init::sta().unwrap();
@@ -42,7 +39,6 @@ fn main() {
         mcom::init::mta().unwrap();
         let device1 = mcom::Rc::try_from(device1);
         let device2 = mcom::Rc::try_from(device2);
-        QUIT.store(true, Relaxed);
         let _ = device1.map(|_| ()).unwrap_err(); // Expected to fail - different COM apartment
         let _ = device2.map(|_| ()).unwrap_err(); // Expected to fail - different COM apartment
     });
