@@ -23,6 +23,7 @@ exclude         = [".vscode"]
 [package.metadata.docs.rs]
 default-target  = "x86_64-pc-windows-msvc"
 targets         = ["x86_64-pc-windows-msvc", "i686-pc-windows-msvc"]
+all-features    = true
 
 [lib]
 path            = "src/_lib.rs"
@@ -81,6 +82,10 @@ required-features   = ["windows-8-1"] # Agile
 
 [dev-dependencies]
 dev = { path = "dev" }
+
+[target.'cfg(windows)'.dependencies]
+com-0-3 = { package = "com", version = "0.3", optional = true }
+wio-0-2 = { package = "wio", version = "0.2", optional = true }
 
 [target.'cfg(windows)'.dependencies.winapi]
 version         = "0.3.9"

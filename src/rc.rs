@@ -192,6 +192,41 @@ impl<I: Interface + AsIUnknown> AsRef<Rc<I>> for Rc<I> {
     fn as_ref(&self) -> &Self { self }
 }
 
+#[cfg(feature = "com-0-3")]
+mod interop_com_0_3_crate {
+    use super::*;
+
+    impl From<com_0_3::interfaces::IUnknown> for Rc<IUnknown> {
+        fn from(com: com_0_3::interfaces::IUnknown) -> Self {
+            unsafe { std::mem::transmute(com) }
+        }
+    }
+
+    impl From<Rc<IUnknown>> for com_0_3::interfaces::IUnknown {
+        fn from(rc: Rc<IUnknown>) -> Self {
+            unsafe { std::mem::transmute(rc) }
+        }
+    }
+}
+
+#[cfg(feature = "wio-0-2")]
+mod interop_wio_0_2_crate {
+    use super::*;
+
+    impl<I: Interface + AsIUnknown> From<wio_0_2::com::ComPtr<I>> for Rc<I> {
+        fn from(wio: wio_0_2::com::ComPtr<I>) -> Self {
+            unsafe { Self::from_raw_unchecked(wio.into_raw()) }
+        }
+    }
+
+    impl<I: Interface + AsIUnknown> From<Rc<I>> for wio_0_2::com::ComPtr<I> {
+        fn from(rc: Rc<I>) -> Self {
+            unsafe { Self::from_raw(rc.into_raw()) }
+        }
+    }
+}
+
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
 #[cfg(windows = "8.0")]
 #[cfg(any(partition = "app", partition = "system"))]
