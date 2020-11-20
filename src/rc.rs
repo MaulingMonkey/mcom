@@ -162,6 +162,15 @@ impl<I: Interface + AsIUnknown + Deref> Rc<I> where I::Target : Interface + AsIU
         assert_eq!(cast as *const _, deref);
         unsafe { Rc::from_raw(cast) }
     }
+
+    /// Cast up the COM inheritence tree
+    pub fn up_ref(&self) -> &Rc<I::Target> {
+        let raw = self.as_ptr();
+        let cast : *mut I::Target = raw.cast();
+        let deref : *const I::Target = unsafe { &**raw };
+        assert_eq!(cast as *const _, deref);
+        unsafe { std::mem::transmute(self) }
+    }
 }
 
 impl<I: Interface + AsIUnknown> Clone for Rc<I> {
