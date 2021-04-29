@@ -78,8 +78,70 @@ impl<I: Interface + AsIUnknown> Rc<I> {
     /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
     /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    #[doc(hidden)]
+    #[deprecated(since = "0.1.2", note = "use `borrow_ptr_opt` instead")]
     pub unsafe fn borrow(ptr: &*mut I) -> &Option<Self> {
         std::mem::transmute(ptr)
+    }
+
+    /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
+    ///
+    /// ### Safety
+    ///
+    /// * `ptr` may be null, in which case `None` will be returned.  Otherwise:
+    /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `ptr` must remain valid until the &[Rc] goes out of scope.
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    pub unsafe fn borrow_ptr_opt(ptr: &*mut I) -> Option<&Self> {
+        let xmute : &Option<Self> = std::mem::transmute(ptr);
+        xmute.as_ref()
+    }
+
+    /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
+    ///
+    /// ### Safety
+    ///
+    /// * `ptr` may be null, but this will result in a panic.  Otherwise:
+    /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `ptr` must remain valid until the &[Rc] goes out of scope.
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    pub unsafe fn borrow_ptr(ptr: &*mut I) -> &Self {
+        Self::borrow_ptr_opt(ptr).unwrap()
+    }
+
+    /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
+    ///
+    /// ### Safety
+    ///
+    /// * `*ptr` **must not** be null, on pain of undefined behavior.
+    /// * `*ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
+    /// * `*ptr` must remain valid until the &[Rc] goes out of scope.
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    pub unsafe fn borrow_ptr_unchecked(ptr: &*mut I) -> &Self {
+        std::mem::transmute(ptr)
+    }
+
+    /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
+    ///
+    /// ### Safety
+    ///
+    /// * `r` must be a "valid" [IUnknown]-derived COM interface, accessible from the current COM apartment.
+    /// * `r` must remain valid until the &[Rc] goes out of scope.
+    ///
+    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    pub unsafe fn borrow_ref<'r, 't: 'r>(r: &'r &'t I) -> &'r Self {
+        std::mem::transmute(r)
     }
 
     /// [CoCreateInstance](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\[[FromApp](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
