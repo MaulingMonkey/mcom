@@ -23,7 +23,7 @@ impl MethodHResult {
     /// Returns the [HRESULT] of the error
     pub fn hresult(&self) -> HRESULT { self.1 }
 
-    /// Returns a link in the format of e.g. "[https://www.hresult.info/Search?q=0x80000005](https://www.hresult.info/Search?q=0x80000005)"
+    /// Returns a link in the format of e.g. "<https://www.hresult.info/Search?q=0x80000005>"
     pub fn hresult_info_search_link(&self) -> String { format!("https://www.hresult.info/Search?q=0x{:08x}", self.1 as u32) }
 }
 
