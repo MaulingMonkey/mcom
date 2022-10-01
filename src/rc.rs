@@ -16,9 +16,9 @@ use std::ops::Deref;
 
 
 /// A \![Send]+\![Sync] basic reference counting smart pointer residing within the current COM apartment.
-#[repr(transparent)] pub struct Rc<I: Interface + AsIUnknown>(NonNull<I>);
+#[repr(transparent)] pub struct Rc<I: AsIUnknown>(NonNull<I>);
 
-impl<I: Interface + AsIUnknown> Rc<I> {
+impl<I: AsIUnknown> Rc<I> {
     /// Take ownership of a raw COM pointer.  [AddRef] will **not** be called.  [Release] **will* be called when this [Rc] is dropped.
     ///
     /// ### Safety
@@ -152,23 +152,23 @@ impl<I: Interface + AsIUnknown> Rc<I> {
     /// * `clsid` and `I` are assumed to be well behaved COM APIs.  This is probably a bad assumption, but a failure to be so is a bug in C++ code, not Rust code.
     ///
     /// [winapi#961]:       https://github.com/retep998/winapi-rs/pull/961
-    pub unsafe fn co_create(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> {
+    pub unsafe fn co_create(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> where I : Interface {
         Self::co_create_impl(clsid, outer)
     }
 
     #[cfg(any(partition = "desktop", partition = "system", partition = "games"))]
-    unsafe fn co_create_impl(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> {
+    unsafe fn co_create_impl(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> where I : Interface {
         Self::co_create_instance(clsid, outer, CLSCTX_INPROC_SERVER)
     }
 
     #[cfg(not(any(partition = "desktop", partition = "system", partition = "games")))]
-    unsafe fn co_create_impl(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> {
+    unsafe fn co_create_impl(clsid: GUID, outer: Option<&Rc<IUnknown>>) -> Result<Self, MethodHResult> where I : Interface {
         Self::co_create_instance_from_app(clsid, outer, CLSCTX_INPROC_SERVER, ())
     }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\]
     #[cfg(any(partition = "desktop", partition="system", partition="games"))]
-    unsafe fn co_create_instance(clsid: GUID, outer: Option<&Rc<IUnknown>>, clsctx: CLSCTX) -> Result<Self, MethodHResult> {
+    unsafe fn co_create_instance(clsid: GUID, outer: Option<&Rc<IUnknown>>, clsctx: CLSCTX) -> Result<Self, MethodHResult> where I : Interface {
         let mut ptr = null_mut();
         let outer = outer.map_or(null_mut(), |unk| unk.as_iunknown_ptr());
         let hr = CoCreateInstance(&clsid, outer, clsctx, &I::uuidof(), &mut ptr);
@@ -180,8 +180,9 @@ impl<I: Interface + AsIUnknown> Rc<I> {
     #[cfg(windows = "8.0")]
     #[cfg(any(partition = "app", partition = "system"))]
     #[allow(dead_code)]
-    unsafe fn co_create_instance_from_app(clsid: GUID, outer: Option<&Rc<IUnknown>>, clsctx: CLSCTX, reserved: ()) -> Result<Self, MethodHResult> {
-        let mut mqi = [MULTI_QI { pIID: &clsid, pItf: null_mut(), hr: 0 }];
+    unsafe fn co_create_instance_from_app(clsid: GUID, outer: Option<&Rc<IUnknown>>, clsctx: CLSCTX, reserved: ()) -> Result<Self, MethodHResult> where I : Interface {
+        let iid = I::uuidof();
+        let mut mqi = [MULTI_QI { pIID: &iid, pItf: null_mut(), hr: 0 }];
         co_create_instance_from_app(clsid, outer, clsctx, reserved, &mut mqi[..])?;
         let [mqi0] = mqi;
         MethodHResult::check("CoCreateInstanceFromApp(..., [0].hr)", mqi0.hr)?;
@@ -215,7 +216,7 @@ impl<I: Interface + AsIUnknown> Rc<I> {
     }
 }
 
-impl<I: Interface + AsIUnknown + Deref> Rc<I> where I::Target : Interface + AsIUnknown + Sized {
+impl<I: AsIUnknown + Deref> Rc<I> where I::Target : AsIUnknown + Sized {
     /// Cast up the COM inheritence tree
     pub fn up(self) -> Rc<I::Target> {
         let raw = self.into_raw();
@@ -235,7 +236,7 @@ impl<I: Interface + AsIUnknown + Deref> Rc<I> where I::Target : Interface + AsIU
     }
 }
 
-impl<I: Interface + AsIUnknown> Clone for Rc<I> {
+impl<I: AsIUnknown> Clone for Rc<I> {
     fn clone(&self) -> Self {
         let _old_rc = unsafe { self.as_iunknown().AddRef() };
         // XXX: Consider asserting if _old_rc > u32::MAX/3 to avoid RC overflows?
@@ -243,12 +244,12 @@ impl<I: Interface + AsIUnknown> Clone for Rc<I> {
     }
 }
 
-impl<I: Interface + AsIUnknown> Deref for Rc<I> {
+impl<I: AsIUnknown> Deref for Rc<I> {
     type Target = I;
     fn deref(&self) -> &Self::Target { unsafe { self.0.as_ref() } }
 }
 
-impl<I: Interface + AsIUnknown> Drop for Rc<I> {
+impl<I: AsIUnknown> Drop for Rc<I> {
     fn drop(&mut self) {
         let (unk, release) = {
             let unk = self.as_iunknown_ptr();
@@ -259,7 +260,7 @@ impl<I: Interface + AsIUnknown> Drop for Rc<I> {
     }
 }
 
-impl<I: Interface + AsIUnknown> AsRef<Rc<I>> for Rc<I> {
+impl<I: AsIUnknown> AsRef<Rc<I>> for Rc<I> {
     fn as_ref(&self) -> &Self { self }
 }
 
