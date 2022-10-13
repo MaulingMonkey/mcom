@@ -214,6 +214,14 @@ impl<I: AsIUnknown> Rc<I> {
         std::mem::forget(self);
         p
     }
+
+    /// Convert this smart pointer into a raw COM API reference without [Release]ing it.
+    /// This is a memory leak, and should probably only be used for long lived factory types that never need to be reinitialized.
+    ///
+    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    pub fn leak(p: Self) -> &'static I {
+        unsafe { &*p.into_raw() }
+    }
 }
 
 impl<I: AsIUnknown + Deref> Rc<I> where I::Target : AsIUnknown + Sized {
