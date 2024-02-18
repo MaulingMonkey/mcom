@@ -37,6 +37,10 @@ unsafe impl<I: Interface + AsIUnknown> Send for Git<I> {}
 /// [IGlobalInterfaceTable]:        https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iglobalinterfacetable
 unsafe impl<I: Interface + AsIUnknown> Sync for Git<I> {}
 
+impl<I: Interface + AsIUnknown> Clone for Git<I> {
+    fn clone(&self) -> Self { Self(self.0.clone()) }
+}
+
 impl<I: Interface + AsIUnknown> TryFrom<Rc<I>> for Git<I> {
     type Error = MethodHResult;
     fn try_from(src: Rc<I>) -> Result<Self, Self::Error> { Self::try_from_lazy(src) }
@@ -64,10 +68,10 @@ impl<I: Interface + AsIUnknown> AsRef<Git<I>> for Git<I> {
 
 
 #[repr(transparent)] struct Cookie<I: Interface + AsIUnknown> {
-    /// "The value of an invalid cookie is 0." 
+    /// "The value of an invalid cookie is 0."
     /// https://docs.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-iglobalinterfacetable-registerinterfaceinglobal
     cookie:     NonZeroU32,
-    phantom:    PhantomData<I>,
+    phantom:    PhantomData<*const I>,
 }
 
 impl<I: Interface + AsIUnknown> Cookie<I> {

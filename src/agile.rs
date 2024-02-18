@@ -19,7 +19,7 @@ use std::ptr::null_mut;
 /// [IAgileObject]:             https://docs.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
 pub struct Agile<I: Interface + AsIUnknown> {
     agile:      Rc<IAgileReference>,
-    phantom:    PhantomData<I>,
+    phantom:    PhantomData<*const I>,
 }
 
 impl<I: Interface + AsIUnknown> Agile<I> {
@@ -88,6 +88,10 @@ unsafe impl<I: Interface + AsIUnknown> Send for Agile<I> {}
 /// [IAgileObject]:             https://docs.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
 /// [INoMarshal]:               https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-inomarshal
 unsafe impl<I: Interface + AsIUnknown> Sync for Agile<I> {}
+
+impl<I: Interface + AsIUnknown> Clone for Agile<I> {
+    fn clone(&self) -> Self { Self { agile: self.agile.clone(), phantom: PhantomData } }
+}
 
 impl<I: Interface + AsIUnknown> TryFrom<Rc<I>> for Agile<I> {
     type Error = MethodHResult;
