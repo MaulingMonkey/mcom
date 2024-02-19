@@ -4,7 +4,7 @@
     "configurations": [
         // mcom
         {
-            "name":                     "mcom • example • d3d9 • debug",
+            "name":                     "example • d3d9 • debug",
             "type":                     "cppdbg",
             "request":                  "launch",
             "internalConsoleOptions":   "openOnSessionStart",
@@ -23,7 +23,7 @@
             },
         },
         {
-            "name":                     "mcom • example • d3d9 • release",
+            "name":                     "example • d3d9 • release",
             "type":                     "cppdbg",
             "request":                  "launch",
             "internalConsoleOptions":   "openOnSessionStart",
@@ -42,7 +42,7 @@
             },
         },
         {
-            "name":                     "mcom • example • d3d11 • debug",
+            "name":                     "example • d3d11 • debug",
             "type":                     "cppdbg",
             "request":                  "launch",
             "internalConsoleOptions":   "openOnSessionStart",
@@ -51,9 +51,9 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" } ],
             "windows": {
-                "type":                     "cppvsdbg",
-                "program":                  "${workspaceFolder}/target/debug/examples/d3d11.exe",
-                "enableDebugHeap":          true,
+                "type":                 "cppvsdbg",
+                "program":              "${workspaceFolder}/target/debug/examples/d3d11.exe",
+                "enableDebugHeap":      true,
             },
             "symbolOptions": {
                 // "cachePath":         "${env:TEMP}/SymbolCache"
@@ -61,7 +61,7 @@
             },
         },
         {
-            "name":                     "mcom • example • d3d11 • release",
+            "name":                     "example • d3d11 • release",
             "type":                     "cppdbg",
             "request":                  "launch",
             "internalConsoleOptions":   "openOnSessionStart",
@@ -70,9 +70,9 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" } ],
             "windows": {
-                "type":                     "cppvsdbg",
-                "program":                  "${workspaceFolder}/target/release/examples/d3d11.exe",
-                "enableDebugHeap":          false,
+                "type":                 "cppvsdbg",
+                "program":              "${workspaceFolder}/target/release/examples/d3d11.exe",
+                "enableDebugHeap":      false,
             },
             "symbolOptions": {
                 // "cachePath":         "${env:TEMP}/SymbolCache"
