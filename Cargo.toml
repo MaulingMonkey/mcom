@@ -28,6 +28,8 @@ default = [
     "winapi-family-all",
 ]
 
+winresult-0-1   = ["winresult-types-0-1"]
+
 # https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
 windows-latest  = ["windows-10"]
 windows-10      = ["windows-8-1"]
@@ -78,7 +80,7 @@ required-features   = ["windows-8-1"] # Agile
 dev = { path = "dev" }
 
 [target.'cfg(windows)'.dependencies]
-winresult-types = "0.1"
+winresult-types-0-1 = { package = "winresult-types", version = "0.1", optional = true }
 com-0-3 = { package = "com", version = "0.3", optional = true }
 wio-0-2 = { package = "wio", version = "0.2", optional = true }
 
