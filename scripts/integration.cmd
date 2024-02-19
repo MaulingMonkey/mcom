@@ -1,4 +1,4 @@
-@pushd "%~dp0.."
+@pushd "%~dp0.." && setlocal
 
 cargo build --no-default-features
 cargo test  --no-default-features --features winapi-family-desktop-app,windows-2000     || goto :err
@@ -49,5 +49,4 @@ cargo check --no-default-features --features winapi-family-games,windows-10     
 cargo check --no-default-features --features winapi-family-games,windows-latest     || goto :err
 
 :err
-@popd
-@exit /b %ERRORLEVEL%
+@popd && endlocal && exit /b %ERRORLEVEL%
