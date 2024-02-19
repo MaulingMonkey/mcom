@@ -1,6 +1,4 @@
-//! Mauling**M**onkey's **COM** interfaces/types/wrappers.
-//!
-//!
+#![doc = include_str!("../Readme.md")]
 //!
 //! # Smart Pointers
 //!
