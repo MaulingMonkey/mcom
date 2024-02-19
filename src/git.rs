@@ -17,7 +17,7 @@ use std::sync::Arc;
 
 /// A [Send]+[Sync], [IGlobalInterfaceTable]-held interface pointer.
 ///
-/// [IGlobalInterfaceTable]:        https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iglobalinterfacetable
+/// [IGlobalInterfaceTable]:        https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iglobalinterfacetable
 pub struct Git<I: Interface + AsIUnknown>(Arc<Cookie<I>>);
 
 impl<I: Interface + AsIUnknown> Git<I> {
@@ -34,7 +34,7 @@ unsafe impl<I: Interface + AsIUnknown> Send for Git<I> {}
 /// multiple threads - each resolving their own, COM-apartment-specific interface pointer if necessary.  As such,
 /// [Agile] should be safe to mark [Send]+[Sync].
 ///
-/// [IGlobalInterfaceTable]:        https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iglobalinterfacetable
+/// [IGlobalInterfaceTable]:        https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iglobalinterfacetable
 unsafe impl<I: Interface + AsIUnknown> Sync for Git<I> {}
 
 impl<I: Interface + AsIUnknown> Clone for Git<I> {
@@ -69,7 +69,7 @@ impl<I: Interface + AsIUnknown> AsRef<Git<I>> for Git<I> {
 
 #[repr(transparent)] struct Cookie<I: Interface + AsIUnknown> {
     /// "The value of an invalid cookie is 0."
-    /// https://docs.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-iglobalinterfacetable-registerinterfaceinglobal
+    /// https://learn.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-iglobalinterfacetable-registerinterfaceinglobal
     cookie:     NonZeroU32,
     phantom:    PhantomData<*const I>,
 }

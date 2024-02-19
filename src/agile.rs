@@ -15,8 +15,8 @@ use std::ptr::null_mut;
 
 /// A [Send]+[Sync], [IAgileReference]-held interface pointer.
 ///
-/// [IAgileReference]:          https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iagilereference
-/// [IAgileObject]:             https://docs.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
+/// [IAgileReference]:          https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iagilereference
+/// [IAgileObject]:             https://learn.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
 pub struct Agile<I: Interface + AsIUnknown> {
     agile:      Rc<IAgileReference>,
     phantom:    PhantomData<*const I>,
@@ -33,7 +33,7 @@ impl<I: Interface + AsIUnknown> Agile<I> {
         Self::ro_get_agile_reference(ReferenceOptions::DELAYED_MARSHAL, unk)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-rogetagilereference)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-rogetagilereference)\]
     /// Creates an agile reference for an object specified by the given interface.
     ///
     /// ### Arguments
@@ -50,7 +50,7 @@ impl<I: Interface + AsIUnknown> Agile<I> {
     /// * `Err(...)` - aka `E_OUTOFMEMORY` - The agile reference couldn't be constructed due to an out-of-memory condition.
     /// * `Err(...)` - aka `E_NOINTERFACE` - The `unk` parameter doesn't support the interface ID specified by the riid parameter.
     ///
-    /// [INoMarshal]:               https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-inomarshal
+    /// [INoMarshal]:               https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-inomarshal
     fn ro_get_agile_reference(ro: impl Into<ReferenceOptions>, unk: impl AsRef<Rc<I>>) -> Result<Self, MethodHResult> {
         let ro = ro.into().0;
         let unk = unk.as_ref();
@@ -62,7 +62,7 @@ impl<I: Interface + AsIUnknown> Agile<I> {
         Ok(Self { agile, phantom: PhantomData })
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-iagilereference-resolve(refiid_void))\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-iagilereference-resolve(refiid_void))\]
     /// Get a COM pointer to `I` that is safe to use from the current thread's COM apartment
     pub fn resolve(&self) -> Result<Rc<I>, MethodHResult> {
         let mut pv = null_mut();
@@ -84,9 +84,9 @@ unsafe impl<I: Interface + AsIUnknown> Send for Agile<I> {}
 /// * Types which implement [INoMarshal] will fail to convert to [Agile] in the first place
 /// * Types which implement neither will be wrapped in lightweight in-process-only marshaling
 ///
-/// [IAgileReference]:          https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iagilereference
-/// [IAgileObject]:             https://docs.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
-/// [INoMarshal]:               https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-inomarshal
+/// [IAgileReference]:          https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-iagilereference
+/// [IAgileObject]:             https://learn.microsoft.com/en-us/windows/win32/api/objidlbase/nn-objidlbase-iagileobject
+/// [INoMarshal]:               https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-inomarshal
 unsafe impl<I: Interface + AsIUnknown> Sync for Agile<I> {}
 
 impl<I: Interface + AsIUnknown> Clone for Agile<I> {
@@ -119,7 +119,7 @@ impl<I: Interface + AsIUnknown> AsRef<Agile<I>> for Agile<I> {
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/ne-combaseapi-agilereferenceoptions)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/ne-combaseapi-agilereferenceoptions)\]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ReferenceOptions(u32);
 

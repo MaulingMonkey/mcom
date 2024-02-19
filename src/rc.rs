@@ -28,9 +28,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `ptr` must remain valid until this [Rc] is dropped
     /// * `ptr.Release()` must be safe+sound when this [Rc] is dropped
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn from_raw_opt(ptr: *mut I) -> Option<Self> {
         Some(Self(NonNull::new(ptr)?))
     }
@@ -44,9 +44,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `ptr` must remain valid until this [Rc] is dropped
     /// * `ptr.Release()` must be safe+sound when this [Rc] is dropped
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn from_raw(ptr: *mut I) -> Self {
         Self::from_raw_opt(ptr).unwrap()
     }
@@ -60,9 +60,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `ptr` must remain valid until this [Rc] is dropped
     /// * `ptr.Release()` must be safe+sound when this [Rc] is dropped
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn from_raw_unchecked(ptr: *mut I) -> Self {
         Self(NonNull::new_unchecked(ptr))
     }
@@ -75,9 +75,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
     /// * `ptr` must remain valid until the &[Rc] goes out of scope.
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     #[doc(hidden)]
     #[deprecated(since = "0.1.2", note = "use `borrow_ptr_opt` instead")]
     pub unsafe fn borrow(ptr: &*mut I) -> &Option<Self> {
@@ -92,9 +92,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
     /// * `ptr` must remain valid until the &[Rc] goes out of scope.
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ptr_opt(ptr: &*mut I) -> Option<&Self> {
         let xmute : &Option<Self> = std::mem::transmute(ptr);
         xmute.as_ref()
@@ -108,9 +108,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
     /// * `ptr` must remain valid until the &[Rc] goes out of scope.
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ptr(ptr: &*mut I) -> &Self {
         Self::borrow_ptr_opt(ptr).unwrap()
     }
@@ -123,9 +123,9 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `*ptr` must be a "valid" [IUnknown]-derived COM interface pointer, accessible from the current COM apartment.
     /// * `*ptr` must remain valid until the &[Rc] goes out of scope.
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ptr_unchecked(ptr: &*mut I) -> &Self {
         std::mem::transmute(ptr)
     }
@@ -137,14 +137,14 @@ impl<I: AsIUnknown> Rc<I> {
     /// * `r` must be a "valid" [IUnknown]-derived COM interface, accessible from the current COM apartment.
     /// * `r` must remain valid until the &[Rc] goes out of scope.
     ///
-    /// [AddRef]:           https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
-    /// [IUnknown]:         https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
+    /// [AddRef]:           https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-addref
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ref<'r, 't: 'r>(r: &'r &'t I) -> &'r Self {
         std::mem::transmute(r)
     }
 
-    /// [CoCreateInstance](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\[[FromApp](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
+    /// [CoCreateInstance](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\[[FromApp](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
     ///
     /// ### Safety
     ///
@@ -166,7 +166,7 @@ impl<I: AsIUnknown> Rc<I> {
         Self::co_create_instance_from_app(clsid, outer, CLSCTX_INPROC_SERVER, ())
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\]
     #[cfg(any(partition = "desktop", partition="system", partition="games"))]
     unsafe fn co_create_instance(clsid: GUID, outer: Option<&Rc<IUnknown>>, clsctx: CLSCTX) -> Result<Self, MethodHResult> where I : Interface {
         let mut ptr = null_mut();
@@ -176,7 +176,7 @@ impl<I: AsIUnknown> Rc<I> {
         Ok(Self::from_raw(ptr.cast()))
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
     #[cfg(windows = "8.0")]
     #[cfg(any(partition = "app", partition = "system"))]
     #[allow(dead_code)]
@@ -189,7 +189,7 @@ impl<I: AsIUnknown> Rc<I> {
         Ok(Self::from_raw(mqi0.pItf.cast()))
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-queryinterface(refiid_void))\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-queryinterface(refiid_void))\]
     ///
     /// Queries a COM object for a pointer to one of its interface; identifying the interface by a reference to its interface identifier (IID).
     pub fn try_cast<I2: Interface + AsIUnknown>(&self) -> Option<Rc<I2>> {
@@ -208,7 +208,7 @@ impl<I: AsIUnknown> Rc<I> {
     /// Convert this smart pointer into a raw COM API pointer without [Release]ing it.
     /// This is a potential memory leak if the function this pointer was passed to did not assume ownership.
     ///
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     pub fn into_raw(self) -> *mut I {
         let p = self.as_ptr();
         std::mem::forget(self);
@@ -218,7 +218,7 @@ impl<I: AsIUnknown> Rc<I> {
     /// Convert this smart pointer into a raw COM API reference without [Release]ing it.
     /// This is a memory leak, and should probably only be used for long lived factory types that never need to be reinitialized.
     ///
-    /// [Release]:          https://docs.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
+    /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     pub fn leak(p: Self) -> &'static I {
         unsafe { &*p.into_raw() }
     }
@@ -307,7 +307,7 @@ mod interop_wio_0_2_crate {
 }
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
 #[cfg(windows = "8.0")]
 #[cfg(any(partition = "app", partition = "system"))]
 #[allow(dead_code)]

@@ -1,6 +1,6 @@
 //! Wrappers around [CoInitializeEx] etc. for initializing COM.
 //!
-//! [CoInitializeEx]:   https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
+//! [CoInitializeEx]:   https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
 
 use crate::errors::MethodHResult;
 
@@ -16,7 +16,7 @@ use std::ptr::null_mut;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
 /// Initialize COM for this thread, creating an Apartment-Threaded apartment if necessary.
 ///
 /// This is typically used for Win32 UI threads
@@ -27,10 +27,10 @@ use std::ptr::null_mut;
 /// *   `Ok(false)` - The COM library was already initialized on this thread.
 /// *   `Err(e) if e == RPC_E_CHANGED_MODE` - A previous call to [CoInitializeEx] specified this thread belonged to an MTA Apartment.
 ///
-/// [CoInitializeEx]:           https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
+/// [CoInitializeEx]:           https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
 pub fn sta() -> Result<bool, MethodHResult> { co_initialize_ex((), CoInit::STA) }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
 /// Initialize COM for this thread, creating a Multi-Threaded apartment if necessary.
 ///
 /// ### Returns
@@ -39,12 +39,12 @@ pub fn sta() -> Result<bool, MethodHResult> { co_initialize_ex((), CoInit::STA) 
 /// *   `Ok(false)` - The COM library was already initialized on this thread.
 /// *   `Err(e) if e == RPC_E_CHANGED_MODE` - A previous call to [CoInitializeEx] specified this thread belonged to an STA Apartment.
 ///
-/// [CoInitializeEx]:           https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
+/// [CoInitializeEx]:           https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
 pub fn mta() -> Result<bool, MethodHResult> { co_initialize_ex((), CoInit::MTA) }
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
 /// Initialize COM for this thread, creating an apartment if necessary.
 ///
 /// ### Arguments
@@ -74,7 +74,7 @@ pub fn co_initialize_ex<'r>(reserved: impl Into<CoInitializeExReserved<'r>>, coi
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-couninitialize)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-couninitialize)\]
 /// Closes the COM library on the current thread, unloads all DLLs loaded by the thread, frees any other resources that
 /// the thread maintains, and forces all RPC connections on the thread to close.
 ///
@@ -83,7 +83,7 @@ pub fn co_initialize_ex<'r>(reserved: impl Into<CoInitializeExReserved<'r>>, coi
 /// * Do not call this from within [DllMain]
 /// * Various Rust wrappers probably rely on COM remaining initialized on this thread
 ///
-/// [DllMain]:  https://docs.microsoft.com/en-us/windows/win32/dlls/dllmain
+/// [DllMain]:  https://learn.microsoft.com/en-us/windows/win32/dlls/dllmain
 pub unsafe fn uninitialize() {
     CoUninitialize(); // no hresult to check
 }
@@ -91,7 +91,7 @@ pub unsafe fn uninitialize() {
 
 
 #[doc(hidden)]
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex)\]
 /// Reserved parameter for calling [co_initialize_ex] with.  Pass `()` instead.
 pub struct CoInitializeExReserved<'p>(*mut c_void, PhantomData<&'p ()>);
 
@@ -105,7 +105,7 @@ impl<'p> From<()> for CoInitializeExReserved<'p> {
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/objbase/ne-objbase-coinit)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/objbase/ne-objbase-coinit)\]
 /// COM apartment type + associated flags for calling [co_initialize_ex] with.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct CoInit(COINIT);
@@ -142,7 +142,7 @@ impl CoInit {
     #[doc(hidden)] pub const MTA                : CoInit = Self::MULTI_THREADED;
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/objbase/ne-objbase-coinit)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/objbase/ne-objbase-coinit)\]
 /// Associated flags for calling [co_initialize_ex] with.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct CoInitFlag(COINIT);
@@ -163,14 +163,14 @@ impl BitOr<CoInitFlag>  for CoInitFlag  { fn bitor(self, rhs: CoInitFlag) -> Sel
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coincrementmtausage)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coincrementmtausage)\]
 /// Puts the current thread into the MTA, if the current thread is not already in an apartment
 ///
-/// [CoDecrementMTAUsage]:  https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-codecrementmtausage
+/// [CoDecrementMTAUsage]:  https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-codecrementmtausage
 pub struct MTAUsageScope(CO_MTA_USAGE_COOKIE);
 
 impl MTAUsageScope {
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coincrementmtausage)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coincrementmtausage)\]
     /// Create and/or keep-alive the MTA, and put the current thread into the MTA if not already in an apartment.
     ///
     /// The CoIncrementMTAUsage function enables clients to create MTA workers and wait on them for completion before exiting the process.
@@ -182,7 +182,7 @@ impl MTAUsageScope {
     /// * Do not call this from within [DllMain]
     /// * Various Rust wrappers probably rely on COM remaining initialized on this thread, dropping this type might uninitialize.
     ///
-    /// [DllMain]:  https://docs.microsoft.com/en-us/windows/win32/dlls/dllmain
+    /// [DllMain]:  https://learn.microsoft.com/en-us/windows/win32/dlls/dllmain
     pub unsafe fn new() -> Result<Self, MethodHResult> {
         let mut cookie = null_mut();
         let hr = CoIncrementMTAUsage(&mut cookie);
@@ -195,7 +195,7 @@ impl Debug for MTAUsageScope {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result { write!(f, "MTAUsageScope") }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-codecrementmtausage)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-codecrementmtausage)\]
 /// CoDecrementMTAUsage
 impl Drop for MTAUsageScope {
     fn drop(&mut self) {
