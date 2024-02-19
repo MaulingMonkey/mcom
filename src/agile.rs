@@ -58,7 +58,7 @@ impl<I: Interface + AsIUnknown> Agile<I> {
         let mut agile = null_mut();
         let hr = unsafe { RoGetAgileReference(ro, &I::uuidof(), unk, &mut agile) };
         MethodHResult::check("RoGetAgileReference", hr)?;
-        let agile = unsafe { Rc::from_raw_opt(agile) }.ok_or(MethodHResult("RoGetAgileReference", hr))?;
+        let agile = unsafe { Rc::from_raw_opt(agile) }.ok_or(MethodHResult::unchecked("RoGetAgileReference", hr))?;
         Ok(Self { agile, phantom: PhantomData })
     }
 

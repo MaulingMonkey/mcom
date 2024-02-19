@@ -312,7 +312,7 @@ mod interop_wio_0_2_crate {
 #[cfg(any(partition = "app", partition = "system"))]
 #[allow(dead_code)]
 unsafe fn co_create_instance_from_app(clsid: GUID, outer: Option<&Rc<IUnknown>>, clsctx: CLSCTX, _reserved: (), out: &mut [MULTI_QI]) -> Result<(), MethodHResult> {
-    let count : u32 = out.len().try_into().map_err(|_| MethodHResult("co_create_instance_from_app", MAKE_HRESULT(SEVERITY_ERROR, FACILITY_NULL, ERROR_ARITHMETIC_OVERFLOW as _)))?;
+    let count : u32 = out.len().try_into().map_err(|_| MethodHResult::unchecked("co_create_instance_from_app", MAKE_HRESULT(SEVERITY_ERROR, FACILITY_NULL, ERROR_ARITHMETIC_OVERFLOW as _)))?;
     let outer = outer.map_or(null_mut(), |unk| unk.as_iunknown_ptr());
     let hr = CoCreateInstanceFromApp(&clsid, outer, clsctx, null_mut(), count, out.as_mut_ptr());
     MethodHResult::check("CoCreateInstanceFromApp", hr)?;

@@ -81,7 +81,7 @@ impl<I: Interface + AsIUnknown> Cookie<I> {
         let mut cookie = 0;
         let hr = GIT.with(|git| unsafe { git.RegisterInterfaceInGlobal(unk, &iid, &mut cookie) });
         MethodHResult::check("IGlobalInterfaceTable::RegisterInterfaceInGlobal", hr)?;
-        NonZeroU32::new(cookie).ok_or(MethodHResult("IGlobalInterfaceTable::RegisterInterfaceInGlobal", hr)).map(|cookie| Self { cookie, phantom: PhantomData })
+        NonZeroU32::new(cookie).ok_or(MethodHResult::unchecked("IGlobalInterfaceTable::RegisterInterfaceInGlobal", hr)).map(|cookie| Self { cookie, phantom: PhantomData })
     }
 
     fn get(&self) -> Result<Rc<I>, MethodHResult> {
@@ -90,7 +90,7 @@ impl<I: Interface + AsIUnknown> Cookie<I> {
         let mut int = null_mut();
         let hr = GIT.with(|git| unsafe { git.GetInterfaceFromGlobal(cookie, &iid, &mut int) });
         MethodHResult::check("IGlobalInterfaceTable::GetInterfaceFromGlobal", hr)?;
-        unsafe { Rc::from_raw_opt(int.cast()) }.ok_or(MethodHResult("IGlobalInterfaceTable::GetInterfaceFromGlobal", hr))
+        unsafe { Rc::from_raw_opt(int.cast()) }.ok_or(MethodHResult::unchecked("IGlobalInterfaceTable::GetInterfaceFromGlobal", hr))
     }
 }
 

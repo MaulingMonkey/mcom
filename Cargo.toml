@@ -84,6 +84,7 @@ required-features   = ["windows-8-1"] # Agile
 dev = { path = "dev" }
 
 [target.'cfg(windows)'.dependencies]
+winresult-types = "0.1"
 com-0-3 = { package = "com", version = "0.3", optional = true }
 wio-0-2 = { package = "wio", version = "0.2", optional = true }
 
