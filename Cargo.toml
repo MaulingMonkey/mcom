@@ -1,11 +1,5 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[workspace]
-members = [
-    ".",
-    "dev",
-]
-
 [package]
 name            = "mcom"
 version         = "0.0.0-git"
