@@ -12,7 +12,7 @@ fn cfg(k: &str, v: impl Display) {
 
 fn main() {
     // https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
-    for (feature, ver) in [
+    let feature_ver = [
         ("windows-2000",    "2000"),
         ("windows-xp",      "xp"),
         ("windows-vista",   "vista"),
@@ -23,14 +23,20 @@ fn main() {
         ("windows-8-1",     "8.1"),
         ("windows-10",      "10"),
         ("windows-10",      "10.0"),
-    ].iter().copied() {
+    ];
+
+    print!(r#"cargo::rustc-check-cfg=cfg(windows, values("#);
+    for (_, ver) in feature_ver.iter().copied() { print!("{:?}, ", ver); }
+    println!("))");
+
+    for (feature, ver) in feature_ver.iter().copied() {
         if is_feature_enabled(feature) {
             cfg("windows", ver);
         }
     }
 
     // C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\winapifamily.h
-    for (feature, partition) in [
+    let feature_partition = [
         ("winapi-family-desktop-app",   "desktop"),
         ("winapi-family-desktop-app",   "app"),
         ("winapi-family-desktop-app",   "pc-app"),
@@ -47,7 +53,13 @@ fn main() {
         ("winapi-family-server",        "server"),
 
         ("winapi-family-games",         "games"),
-    ].iter().copied() {
+    ];
+
+    print!(r#"cargo::rustc-check-cfg=cfg(partition, values("#);
+    for (_, partition) in feature_partition.iter().copied() { print!("{:?}, ", partition); }
+    println!(r#"))"#);
+
+    for (feature, partition) in feature_partition.iter().copied() {
         if is_feature_enabled(feature) {
             cfg("partition", partition);
         }
