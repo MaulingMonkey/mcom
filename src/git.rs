@@ -7,11 +7,12 @@ use winapi::shared::winerror::SUCCEEDED;
 use winapi::um::cguid::CLSID_StdGlobalInterfaceTable;
 use winapi::um::objidlbase::IGlobalInterfaceTable;
 
-use std::convert::TryFrom;
-use std::num::NonZeroU32;
-use std::marker::PhantomData;
-use std::ptr::null_mut;
-use std::sync::Arc;
+use alloc::sync::Arc;
+
+use core::convert::TryFrom;
+use core::num::NonZeroU32;
+use core::marker::PhantomData;
+use core::ptr::null_mut;
 
 
 
@@ -104,7 +105,7 @@ impl<I: Interface + AsIUnknown> Drop for Cookie<I> {
 
 
 
-thread_local! {
+std::thread_local! {
     static GIT : mcom::Rc<IGlobalInterfaceTable> = create_thread_git();
 }
 

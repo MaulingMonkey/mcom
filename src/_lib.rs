@@ -41,10 +41,14 @@
 //!
 //! [winrt]:                        https://docs.rs/winrt/
 
+#![no_std]
 #![deny(missing_docs)]
 #![deny(unreachable_patterns)]  // Likely missing "use winapi::shared::winerror::S_OK;" or similar
 #![deny(non_snake_case)]        // Likely missing "use winapi::shared::winerror::S_OK;" or similar
 #![cfg_attr(not(all(windows = "10", partition = "desktop")), allow(unused_imports))]
+
+extern crate alloc;
+extern crate std;
 
 #[cfg(doc)] #[path = "../doc/_doc.rs"] pub mod Documentation;
 

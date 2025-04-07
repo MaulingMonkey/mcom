@@ -1,0 +1,5 @@
+# https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file
+
+[toolchain]
+# set to MSRV by default so e.g. rust-analyzer doesn't generate post-MSRV lockfiles
+channel = "1.81.0" # core::error::Error

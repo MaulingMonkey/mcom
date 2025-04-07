@@ -1,4 +1,3 @@
-#[allow(unused_imports)] use crate::Git;
 use crate::{AsIUnknown, Rc};
 use crate::errors::MethodHResult;
 
@@ -6,10 +5,10 @@ use winapi::Interface;
 use winapi::um::combaseapi::{AGILEREFERENCE_DEFAULT, AGILEREFERENCE_DELAYEDMARSHAL, AgileReferenceOptions, RoGetAgileReference};
 use winapi::um::objidlbase::IAgileReference;
 
-use std::convert::TryFrom;
-use std::fmt::{self, Debug, Formatter};
-use std::marker::PhantomData;
-use std::ptr::null_mut;
+use core::convert::TryFrom;
+use core::fmt::{self, Debug, Formatter};
+use core::marker::PhantomData;
+use core::ptr::null_mut;
 
 
 

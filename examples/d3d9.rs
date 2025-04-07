@@ -1,7 +1,7 @@
 use winapi::shared::d3d9::*;
 use winapi::shared::winerror::REGDB_E_IIDNOTREG;
 
-use std::convert::TryFrom;
+use core::convert::TryFrom;
 
 
 

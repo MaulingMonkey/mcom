@@ -4,8 +4,8 @@ use winapi::shared::winerror::REGDB_E_IIDNOTREG;
 use winapi::um::d3dcommon::*;
 use winapi::um::d3d11::*;
 
-use std::convert::TryFrom;
-use std::ptr::{null, null_mut};
+use core::convert::TryFrom;
+use core::ptr::{null, null_mut};
 
 
 

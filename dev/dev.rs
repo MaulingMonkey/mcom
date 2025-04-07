@@ -1,6 +1,5 @@
 use winapi::um::winuser::*;
 
-//use std::ops::Drop;
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use std::sync::Arc;
 use std::ptr::null_mut;

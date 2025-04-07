@@ -2,7 +2,7 @@
 
 use winapi::shared::winerror::{HRESULT, SUCCEEDED};
 
-use std::fmt::{self, Debug, Display, Formatter};
+use core::fmt::{self, Debug, Display, Formatter};
 
 
 
@@ -27,7 +27,7 @@ impl MethodHResult {
     pub fn hresult(&self) -> HRESULT { self.hr }
 
     /// Returns a link in the format of e.g. "<https://www.hresult.info/Search?q=0x80000005>"
-    pub fn hresult_info_search_link(&self) -> String { format!("https://www.hresult.info/Search?q=0x{:08x}", self.to_u32()) }
+    pub fn hresult_info_search_link(&self) -> alloc::string::String { alloc::format!("https://www.hresult.info/Search?q=0x{:08x}", self.to_u32()) }
 }
 
 impl MethodHResult {
@@ -38,7 +38,7 @@ impl MethodHResult {
 impl Debug   for MethodHResult { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "MethodHResult({:?}, 0x{:08x})", self.method, self.to_u32()) } }
 impl Display for MethodHResult { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "{} failed with HRESULT == 0x{:08x}", self.method, self.to_u32()) } }
 
-impl std::error::Error for MethodHResult {}
+impl core::error::Error for MethodHResult {}
 
 impl From<MethodHResult> for HRESULT { fn from(value: MethodHResult) -> Self { value.hresult() } }
 #[cfg(feature = "winresult-types-0-1")] impl From<MethodHResult> for winresult_types_0_1::HResult { fn from(value: MethodHResult) -> Self { winresult_types_0_1::HResult::from(value.hr) } }

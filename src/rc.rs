@@ -9,9 +9,9 @@ use winapi::um::combaseapi::{CoCreateInstance, CoCreateInstanceFromApp};
 use winapi::um::objidlbase::MULTI_QI;
 use winapi::um::unknwnbase::IUnknown;
 
-use std::convert::TryInto;
-use std::ptr::{NonNull, null_mut};
-use std::ops::Deref;
+use core::convert::TryInto;
+use core::ptr::{NonNull, null_mut};
+use core::ops::Deref;
 
 
 
@@ -81,7 +81,7 @@ impl<I: AsIUnknown> Rc<I> {
     #[doc(hidden)]
     #[deprecated(since = "0.1.2", note = "use `borrow_ptr_opt` instead")]
     pub unsafe fn borrow(ptr: &*mut I) -> &Option<Self> {
-        std::mem::transmute(ptr)
+        core::mem::transmute(ptr)
     }
 
     /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
@@ -96,7 +96,7 @@ impl<I: AsIUnknown> Rc<I> {
     /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ptr_opt(ptr: &*mut I) -> Option<&Self> {
-        let xmute : &Option<Self> = std::mem::transmute(ptr);
+        let xmute : &Option<Self> = core::mem::transmute(ptr);
         xmute.as_ref()
     }
 
@@ -127,7 +127,7 @@ impl<I: AsIUnknown> Rc<I> {
     /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ptr_unchecked(ptr: &*mut I) -> &Self {
-        std::mem::transmute(ptr)
+        core::mem::transmute(ptr)
     }
 
     /// Borrow a raw COM pointer.  [AddRef] will **not** be called.  [Release] will not be called either, as this returns a transmuted reference.
@@ -141,7 +141,7 @@ impl<I: AsIUnknown> Rc<I> {
     /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     /// [IUnknown]:         https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
     pub unsafe fn borrow_ref<'r, 't: 'r>(r: &'r &'t I) -> &'r Self {
-        std::mem::transmute(r)
+        core::mem::transmute(r)
     }
 
     /// [CoCreateInstance](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstance)\[[FromApp](https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-cocreateinstancefromapp)\]
@@ -211,7 +211,7 @@ impl<I: AsIUnknown> Rc<I> {
     /// [Release]:          https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nf-unknwn-iunknown-release
     pub fn into_raw(self) -> *mut I {
         let p = self.as_ptr();
-        std::mem::forget(self);
+        core::mem::forget(self);
         p
     }
 
@@ -240,7 +240,7 @@ impl<I: AsIUnknown + Deref> Rc<I> where I::Target : AsIUnknown + Sized {
         let cast : *mut I::Target = raw.cast();
         let deref : *const I::Target = unsafe { &**raw };
         assert_eq!(cast as *const _, deref);
-        unsafe { std::mem::transmute(self) }
+        unsafe { core::mem::transmute(self) }
     }
 }
 
@@ -278,13 +278,13 @@ mod interop_com_0_3_crate {
 
     impl From<com_0_3::interfaces::IUnknown> for Rc<IUnknown> {
         fn from(com: com_0_3::interfaces::IUnknown) -> Self {
-            unsafe { std::mem::transmute(com) }
+            unsafe { core::mem::transmute(com) }
         }
     }
 
     impl From<Rc<IUnknown>> for com_0_3::interfaces::IUnknown {
         fn from(rc: Rc<IUnknown>) -> Self {
-            unsafe { std::mem::transmute(rc) }
+            unsafe { core::mem::transmute(rc) }
         }
     }
 }
@@ -320,8 +320,8 @@ unsafe fn co_create_instance_from_app(clsid: GUID, outer: Option<&Rc<IUnknown>>,
 }
 
 #[test] fn layout() {
-    use std::mem::*;
-    use std::ffi::c_void;
+    use core::mem::*;
+    use core::ffi::c_void;
 
     assert_eq!(align_of::<*const c_void>(), align_of::<Rc<IUnknown>>());
     assert_eq!(align_of::<*const c_void>(), align_of::<Option<Rc<IUnknown>>>());

@@ -9,10 +9,10 @@ use winapi::shared::winerror::{S_OK, S_FALSE};
 use winapi::um::combaseapi::{CoInitializeEx, CoUninitialize, CoIncrementMTAUsage, CoDecrementMTAUsage, CO_MTA_USAGE_COOKIE};
 use winapi::um::objbase::{COINIT, COINIT_APARTMENTTHREADED, COINIT_MULTITHREADED, COINIT_DISABLE_OLE1DDE, COINIT_SPEED_OVER_MEMORY};
 
-use std::fmt::{self, Debug, Formatter};
-use std::marker::PhantomData;
-use std::ops::{BitOr, BitOrAssign};
-use std::ptr::null_mut;
+use core::fmt::{self, Debug, Formatter};
+use core::marker::PhantomData;
+use core::ops::{BitOr, BitOrAssign};
+use core::ptr::null_mut;
 
 
 
