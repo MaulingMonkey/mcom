@@ -12,7 +12,8 @@
         },
         {
             "label":            "help",
-            "command":          "cargo +nightly doc --frozen --no-deps --open || cargo doc --frozen --no-deps --open",
+            "command":          "cargo +nightly doc --frozen --no-deps --open --all-features || cargo doc --frozen --no-deps --open --all-features",
+            "options":          { "env": { "CARGO_TARGET_DIR": "target\\doc" } },
         },
 
 
