@@ -25,9 +25,13 @@ path            = "src/_lib.rs"
 
 [features]
 default = [
+    "std",
     "windows-latest",
     "winapi-family-all",
 ]
+
+alloc           = []
+std             = ["alloc"]
 
 winresult-0-1   = ["winresult-types-0-1"]
 
@@ -98,6 +102,7 @@ features = [
     "combaseapi",
     "objbase",
     "objidlbase",
+    "processthreadsapi",
     "unknwnbase",
 ]
 
