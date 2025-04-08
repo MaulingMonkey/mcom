@@ -2,7 +2,7 @@
 
 [package]
 name            = "mcom"
-version         = "0.0.0-git"
+version         = "0.1.5"
 authors         = ["MaulingMonkey <git@maulingmonkey.com>"]
 rust-version    = "1.81.0" # core::error::Error
 edition         = "2018"
