@@ -47,8 +47,8 @@
 #![deny(non_snake_case)]        // Likely missing "use winapi::shared::winerror::S_OK;" or similar
 #![cfg_attr(not(all(windows = "10", partition = "desktop")), allow(unused_imports))]
 
-extern crate alloc;
-extern crate std;
+extern crate alloc; // XXX: this is currently required by errors::MethodHResult::hresult_info_search_link even without feature = "alloc".  Gate when next bumping major semver.
+#[cfg(feature = "std")] extern crate std;
 
 #[cfg(doc)] #[path = "../doc/_doc.rs"] pub mod Documentation;
 

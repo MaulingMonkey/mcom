@@ -28,6 +28,7 @@ impl MethodHResult {
 
     /// Returns a link in the format of e.g. "<https://www.hresult.info/Search?q=0x80000005>"
     #[deprecated = "This function will be removed in 0.2.0"]
+    // #[cfg(feature = "alloc")] // XXX: this method predates the feature, so this feature gate cannot be introduced without a breaking change
     pub fn hresult_info_search_link(&self) -> alloc::string::String { alloc::format!("https://www.hresult.info/Search?q=0x{:08x}", self.to_u32()) }
 }
 

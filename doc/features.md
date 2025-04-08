@@ -5,6 +5,9 @@
 
 | Feature                       | Description   |
 | ----------------------------- | ------------- |
+|                               | **Interop with standard crates.**
+| ✔️ alloc                     | Gate new exposure of <code>[alloc]</code>. <br> Sadly, <code>extern crate [alloc]</code> is required even without the feature.
+| ✔️ std                       | Use <code>extern crate [std]</code>. <br> Currently, this just controls the implementation of thread local storage implementing [Git].
 |                               | **Expose APIs by required windows version.**  Highest version wins.
 | ✔️ windows-latest            | Enable APIs that require the most recent version of Windows
 | ✔️ windows-10                |
@@ -23,12 +26,17 @@
 | ✔️ winapi-family-server      | Enable APIs available to Windows Server applications
 | ✔️ winapi-family-games       | Enable APIs available to Games and Applications
 |                               | **Interop with "peer" crates.**
-| ❌ com-0-3                   | `com = "0.3"` interop (convert between [Rc]&lt;[IUnknown]&gt; ⮀ [com::interfaces::IUnknown])
-| ❌ wio-0-2                   | `wio = "0.2"` interop (convert between [Rc] ⮀ [wio::com::ComPtr])
+| ❌ com-0-3                   | <code>[com] = "0.3"</code> interop (convert between [Rc]&lt;[IUnknown]&gt; ⮀ [com::interfaces::IUnknown])
+| ❌ wio-0-2                   | <code>[wio] = "0.2"</code> interop (convert between [Rc] ⮀ [wio::com::ComPtr])
 
 
 
 <!-- References -->
+
+[alloc]:                        https://doc.rust-lang.org/alloc/
+[std]:                          https://doc.rust-lang.org/std/
+[com]:                          https://docs.rs/com/0.3/
+[wio]:                          https://docs.rs/wio/0.2/
 
 [IUnknown]:                     https://learn.microsoft.com/en-us/windows/win32/api/unknwn/nn-unknwn-iunknown
 [com::interfaces::IUnknown]:    https://docs.rs/com/0.3/com/interfaces/struct.IUnknown.html

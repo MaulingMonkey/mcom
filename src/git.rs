@@ -80,7 +80,7 @@ impl<I: Interface + AsIUnknown> Cookie<I> {
         let unk = rc.as_iunknown_ptr();
         let iid = I::uuidof();
         let mut cookie = 0;
-        let hr = GIT.with(|git| unsafe { git.RegisterInterfaceInGlobal(unk, &iid, &mut cookie) });
+        let hr = with_git(|git| unsafe { git.RegisterInterfaceInGlobal(unk, &iid, &mut cookie) });
         MethodHResult::check("IGlobalInterfaceTable::RegisterInterfaceInGlobal", hr)?;
         NonZeroU32::new(cookie).ok_or(MethodHResult::unchecked("IGlobalInterfaceTable::RegisterInterfaceInGlobal", hr)).map(|cookie| Self { cookie, phantom: PhantomData })
     }
@@ -89,7 +89,7 @@ impl<I: Interface + AsIUnknown> Cookie<I> {
         let cookie : u32 = self.cookie.into();
         let iid = I::uuidof();
         let mut int = null_mut();
-        let hr = GIT.with(|git| unsafe { git.GetInterfaceFromGlobal(cookie, &iid, &mut int) });
+        let hr = with_git(|git| unsafe { git.GetInterfaceFromGlobal(cookie, &iid, &mut int) });
         MethodHResult::check("IGlobalInterfaceTable::GetInterfaceFromGlobal", hr)?;
         unsafe { Rc::from_raw_opt(int.cast()) }.ok_or(MethodHResult::unchecked("IGlobalInterfaceTable::GetInterfaceFromGlobal", hr))
     }
@@ -98,15 +98,57 @@ impl<I: Interface + AsIUnknown> Cookie<I> {
 impl<I: Interface + AsIUnknown> Drop for Cookie<I> {
     fn drop(&mut self) {
         let cookie : u32 = self.cookie.into();
-        let hr = GIT.with(|git| unsafe { git.RevokeInterfaceFromGlobal(cookie) });
+        let hr = with_git(|git| unsafe { git.RevokeInterfaceFromGlobal(cookie) });
         assert!(SUCCEEDED(hr), "IGlobalInterfaceTable::RevokeInterfaceFromGlobal failed with HRESULT == 0x{:08x}", hr);
     }
 }
 
 
 
-std::thread_local! {
-    static GIT : mcom::Rc<IGlobalInterfaceTable> = create_thread_git();
+#[cfg(feature = "std")] fn with_git<R>(f: impl FnOnce(&IGlobalInterfaceTable) -> R) -> R {
+    std::thread_local! { static GIT : mcom::Rc<IGlobalInterfaceTable> = create_thread_git(); }
+    GIT.with(|git| f(git))
+}
+
+// XXX: `Git` was introduced before `feature = "std"`.  Gating behind the feature would be a breaking change.
+// As such, roll our own poorly tested thread local storage... but only if we don't have `feature = "std"`.
+#[cfg(not(feature = "std"))] fn with_git<R>(f: impl FnOnce(&IGlobalInterfaceTable) -> R) -> R {
+    use core::sync::atomic::{AtomicU32, Ordering::*};
+    use winapi::um::processthreadsapi::*;
+
+    let tls_slot = {
+        static TLS_SLOT : AtomicU32 = AtomicU32::new(TLS_OUT_OF_INDEXES);
+        let prev_slot = TLS_SLOT.load(Acquire);
+        if prev_slot != TLS_OUT_OF_INDEXES {
+            prev_slot
+        } else {
+            let new_slot = unsafe { TlsAlloc() };
+            assert_ne!(new_slot, TLS_OUT_OF_INDEXES, "TlsAlloc failed");
+            match TLS_SLOT.compare_exchange(TLS_OUT_OF_INDEXES, new_slot, SeqCst, SeqCst) {
+                Ok(_old_slot) => {
+                    debug_assert_eq!(_old_slot, TLS_OUT_OF_INDEXES, "TLS_SLOT.compare_exchange(TLS_OUT_OF_INDEXES, ...) should've only returned Ok(TLS_OUT_OF_INDEXES)");
+                    new_slot
+                },
+                Err(new_slot_another_thread) => { // We lost a race with another thread
+                    unsafe { TlsFree(new_slot) };
+                    new_slot_another_thread
+                },
+            }
+        }
+    };
+
+    let git = {
+        let git : *mut IGlobalInterfaceTable = unsafe { TlsGetValue(tls_slot) }.cast();
+        if git.is_null() {
+            let git = create_thread_git();
+            assert!(0 != unsafe { TlsSetValue(tls_slot, git.as_ptr().cast()) });
+            git.into_raw()
+        } else {
+            git
+        }
+    };
+
+    f(unsafe { &*git })
 }
 
 fn create_thread_git() -> mcom::Rc<IGlobalInterfaceTable> {
